@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>九野 · 本地版</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <video id="bgVideo" class="bg-video" autoplay muted loop playsinline></video>
+    <div class="shade"></div>
+
+    <div class="app">
+      <header class="chrome">
+        <button class="announce" id="announceBtn">公告</button>
+        <div class="chrome-right">
+          <button class="chrome-btn" id="minBtn" title="最小化">—</button>
+          <button class="chrome-btn" id="closeBtn" title="关闭">✕</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="left">
+          <div class="logo-wrap">
+            <img id="logo" class="logo" alt="九野" />
+          </div>
+
+          <section class="panel accounts-panel">
+            <div class="panel-head">
+              <h2>账号</h2>
+              <span class="count" id="accountCount"></span>
+            </div>
+            <div class="account-list-wrap">
+              <div class="account-list" id="accountList"></div>
+              <div class="scroll-thumb" id="accountThumb"></div>
+            </div>
+            <button class="ghost full" id="addBtn">添加账号</button>
+          </section>
+        </section>
+
+        <section class="panel detail-panel">
+          <div class="detail-head">
+            <h1 id="detailName">未选择账号</h1>
+            <p id="detailSub">在左侧选择账号，或点「添加账号」</p>
+          </div>
+          <div class="hairline"></div>
+          <div class="info-rows" id="infoRows"></div>
+          <div class="detail-foot">
+            <button class="link danger" id="deleteBtn">删除此账号</button>
+          </div>
+        </section>
+
+        <aside class="panel action-panel">
+          <div class="action-scroll">
+          <div class="section-title">画面设置</div>
+          <div class="seg" id="screenMode">
+            <button data-full="0">窗口化</button>
+            <button data-full="1">全屏</button>
+          </div>
+          <select id="resolution" class="select"></select>
+
+          <div class="field-label">画质</div>
+          <div class="seg quality" id="quality">
+            <button data-q="1">标准</button>
+            <button data-q="2">低</button>
+            <button data-q="3">高</button>
+            <button data-q="4">极致</button>
+          </div>
+
+          <div class="toggles">
+            <label class="switch-row"><span>抗锯齿</span><input type="checkbox" data-toggle="AntiAliasing" /></label>
+            <label class="switch-row"><span>泛光</span><input type="checkbox" data-toggle="Bloom" /></label>
+            <label class="switch-row"><span>高帧率</span><input type="checkbox" data-toggle="FPSHigh" /></label>
+          </div>
+
+          <div class="section-title volume-title">音量</div>
+          <div class="volume-row">
+            <span class="vol-label">音乐</span>
+            <input type="range" id="bgmVol" min="0" max="100" step="1" />
+            <button class="mute" id="bgmMute" title="静音">♪</button>
+          </div>
+          <div class="volume-row">
+            <span class="vol-label">音效</span>
+            <input type="range" id="seVol" min="0" max="100" step="1" />
+            <button class="mute" id="seMute" title="静音">♪</button>
+          </div>
+          <div class="hint">音量与游戏内一致，可直接试听</div>
+
+          <div class="service-block">
+            <div class="section-title">本地服务</div>
+            <div class="service-row" id="svcPg"><i></i><span>数据库</span><b>检查中</b></div>
+            <div class="service-row" id="svcSrv"><i></i><span>服务器</span><b>检查中</b></div>
+            <div class="service-row" id="svcHttp"><i></i><span>接口</span><b>检查中</b></div>
+            <button class="link small" id="restartBtn">重启服务器</button>
+          </div>
+          </div>
+
+          <div class="actions">
+            <button class="ghost" id="updateBtn">更新启动器</button>
+            <button class="primary" id="enterBtn" disabled>等待服务就绪…</button>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="console" id="console">
+        <div class="console-head">
+          <button class="console-toggle" id="consoleToggle"><span id="chevron">▸</span> 服务端控制台</button>
+          <div class="console-tabs">
+            <button id="retryBtn" class="retry hidden">重试启动服务</button>
+            <button class="tab active" data-log="server">服务端</button>
+            <button class="tab" data-log="pg">数据库</button>
+          </div>
+        </div>
+        <pre class="console-body" id="consoleBody"></pre>
+      </footer>
+    </div>
+
+    <audio id="bgm" loop></audio>
+
+    <div class="modal-backdrop hidden" id="modal">
+      <div class="modal panel">
+        <h3 id="modalTitle"></h3>
+        <div id="modalBody" class="modal-body"></div>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+
+    <div class="toast hidden" id="toast"></div>
+
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

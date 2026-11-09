@@ -1,0 +1,38 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  launcher:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+          cache-dependency-path: launcher/go.sum
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+
+      - name: Build launcher
+        working-directory: launcher
+        shell: pwsh
+        env:
+          GOFLAGS: -buildvcs=false
+        run: |
+          bun install --frozen-lockfile
+          bun run build -- -skip-installer
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: launcher-windows-amd64
+          path: launcher/build/windows-amd64/*.exe
+          if-no-files-found: error

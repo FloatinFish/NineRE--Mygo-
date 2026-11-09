@@ -1,0 +1,7 @@
+launcher/node_modules/
+launcher/build/
+launcher/dist/
+launcher/.mygo/
+launcher/assets/
+*.log
+dist/

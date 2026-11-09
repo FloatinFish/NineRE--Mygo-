@@ -1,0 +1,52 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+          cache-dependency-path: launcher/go.sum
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+
+      - name: Build launcher
+        working-directory: launcher
+        shell: pwsh
+        env:
+          GOFLAGS: -buildvcs=false
+        run: |
+          bun install --frozen-lockfile
+          bun run build -- -skip-installer
+
+      - name: Package release assets
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $exe = Get-ChildItem -Path launcher/build/windows-amd64 -Filter *.exe | Select-Object -First 1
+          if (-not $exe) { throw "launcher exe not found" }
+          Copy-Item $exe.FullName dist/NineRegionsLauncher.exe -Force
+          $hash = (Get-FileHash dist/NineRegionsLauncher.exe -Algorithm SHA256).Hash.ToLower()
+          "$hash  NineRegionsLauncher.exe" | Out-File -FilePath dist/SHA256SUMS -Encoding ascii
+          Get-Content dist/SHA256SUMS
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/NineRegionsLauncher.exe
+            dist/SHA256SUMS
+          generate_release_notes: true

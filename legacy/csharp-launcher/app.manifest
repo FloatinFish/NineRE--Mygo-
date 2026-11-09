@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="1.0.0.0" name="PalrLauncher.app" />
+  <!--
+    2026-10-30：不再声明 DPI 感知。
+    在 125% 缩放的机器上，声明感知 + WPF 的缩放口径不一致，导致内容按 1.25 倍渲染、
+    窗口却按物理像素创建 → 右侧一栏（含关闭/缩小按钮）被挤到窗口外。
+    交给系统整体缩放后，所有内容一定在窗口内，代价是文字略软。
+  -->
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+    </application>
+  </compatibility>
+</assembly>
