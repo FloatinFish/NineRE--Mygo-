@@ -68,6 +68,12 @@ src/style.css   全部样式
 视频/音乐走 `127.0.0.1` 回环 HTTP（MyGo 官方建议；WebKitGTK 不支持自定义协议播媒体）。
 BGM 用 HTML `<audio>`，自动播放靠 `PageOptions.Autoplay: AutoplayAllow`。
 
+## 反馈
+
+公告右侧的 GitHub 图标打开反馈弹窗。提交时在默认浏览器打开预填好的 Issue 页面
+（当前指向主仓库 Issues），启动器不保存任何 GitHub 凭据；用户在浏览器里登录并确认发布即可。
+反馈正文会自动带 `NineRE Launcher <version>` 与平台信息。
+
 ## 更新通道
 
 启动器检查 `FloatinFish/NineRE--Mygo-` 的最新 Release，下载 `NineRE-Launcher.exe`，

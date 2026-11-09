@@ -93,6 +93,36 @@ button, input, select { font: inherit; color: inherit; }
   border-color: var(--gold);
 }
 
+.chrome-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gh {
+  --app-region: no-drag;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+  border: 1px solid rgba(201, 163, 90, 0.55);
+  background: rgba(18, 20, 24, 0.42);
+  color: var(--gold-bright);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.gh:hover {
+  background: rgba(201, 163, 90, 0.16);
+  border-color: var(--gold);
+}
+.gh svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
 .chrome-right {
   --app-region: no-drag;
   display: flex;
@@ -702,6 +732,20 @@ input[type="range"]::-webkit-slider-thumb {
   outline: none;
 }
 .modal-body input:focus { border-color: var(--gold-dim); }
+.modal-body textarea {
+  width: 100%;
+  min-height: 140px;
+  margin-top: 8px;
+  padding: 9px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line-soft);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+  resize: vertical;
+}
+.modal-body textarea:focus { border-color: var(--gold-dim); }
 .modal-actions {
   display: flex;
   justify-content: flex-end;

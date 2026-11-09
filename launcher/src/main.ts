@@ -484,6 +484,44 @@ function onUpdateClick() {
   ]);
 }
 
+function openFeedback() {
+  const wrap = document.createElement("div");
+  wrap.textContent = "写下你的反馈或建议。提交后会在浏览器打开 GitHub Issue 页面，确认发布即可。";
+  const ta = document.createElement("textarea");
+  ta.id = "fbText";
+  ta.placeholder = "例如：希望增加……";
+  ta.rows = 7;
+  ta.addEventListener("keydown", (ev) => {
+    if ((ev.ctrlKey || ev.metaKey) && ev.key === "Enter") {
+      ev.preventDefault();
+      modalActions.querySelector<HTMLButtonElement>(".primary")?.click();
+    }
+  });
+  wrap.append(ta);
+  showModal("反馈", wrap, [
+    { label: "取消", action: closeModal },
+    {
+      label: "一键提交",
+      primary: true,
+      action: async () => {
+        const text = ta.value.trim();
+        if (!text) {
+          toast("先写点内容");
+          return;
+        }
+        try {
+          await Launcher.submitFeedback(text);
+          closeModal();
+          toast("已在浏览器打开 GitHub，确认后提交即可");
+        } catch (e) {
+          toast("打开失败：" + errText(e));
+        }
+      },
+    },
+  ]);
+  window.setTimeout(() => ta.focus(), 30);
+}
+
 function openAnnouncement() {
   const body = document.createElement("div");
   body.textContent = snap?.announcement || "暂无公告。";
@@ -544,6 +582,7 @@ function bindEvents() {
   $("#minBtn").addEventListener("click", () => void currentWindow.minimize());
   $("#closeBtn").addEventListener("click", () => void currentWindow.close());
   $("#announceBtn").addEventListener("click", openAnnouncement);
+  $("#feedbackBtn").addEventListener("click", openFeedback);
   $("#addBtn").addEventListener("click", openAddAccount);
   $("#deleteBtn").addEventListener("click", openDeleteAccount);
   restartBtn.addEventListener("click", () => void restartServer());

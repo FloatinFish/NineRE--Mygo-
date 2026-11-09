@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4 - 2026-11-09
+
+- 公告旁新增 GitHub 反馈入口（Octocat 图标）。
+- 弹窗输入反馈，一键在浏览器打开预填好的 GitHub Issue；启动器不保存 GitHub 凭据。
+- 反馈自动带 NineRE Launcher 版本与平台信息。
+
 ## 0.1.3 - 2026-11-09
 
 - 首次启动自动部署：`pgdata-template` → `pgdata`，补 `Server/data` 与默认 `setting/db.json`。

@@ -131,4 +131,11 @@ export const Launcher = {
   stopServices(): Promise<void> {
     return call("Launcher.StopServices");
   },
+  /**
+   * SubmitFeedback 在默认浏览器打开预填好的 GitHub Issue 页面。
+   * 启动器不保存任何 GitHub 凭据；用户在浏览器里确认后提交。
+   */
+  submitFeedback(text: string): Promise<string> {
+    return call("Launcher.SubmitFeedback", text);
+  },
 } as const;

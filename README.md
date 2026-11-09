@@ -61,6 +61,12 @@ cd launcher
 
 详细流程与失败处理见 [`docs/UPDATE-CHANNEL.md`](docs/UPDATE-CHANNEL.md)。
 
+## 反馈
+
+启动器公告右侧的 GitHub 图标打开反馈弹窗；提交时在默认浏览器打开预填好的 Issue 页面
+（当前指向主仓库 Issues），不需要在启动器内绑定账号。反馈正文会自动带
+`NineRE Launcher <version>` 与平台信息。
+
 ## 便携整合包（傻瓜版）
 
 `portable/tools/make-portable-zip.ps1` 从一份完整便携包组装 `NineRE-Portable.zip`：
