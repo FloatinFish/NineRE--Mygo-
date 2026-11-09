@@ -22,7 +22,7 @@ import (
 const (
 	repoSlug      = "FloatinFish/NineRE--Mygo-"
 	releaseAPI    = "https://api.github.com/repos/" + repoSlug + "/releases/latest"
-	launcherAsset = "NineRE-Starter.exe"
+	launcherAsset = "NineRE-Launcher.exe"
 	sumsAsset     = "SHA256SUMS"
 )
 
@@ -48,7 +48,7 @@ func (l *Launcher) CheckUpdate() UpdateInfo {
 		return info
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
-	req.Header.Set("User-Agent", "NineRE-Starter/"+appVersion)
+	req.Header.Set("User-Agent", "NineRE-Launcher/"+appVersion)
 	resp, err := client.Do(req)
 	if err != nil {
 		info.Error = "检查更新失败：" + err.Error()
@@ -67,9 +67,10 @@ func (l *Launcher) CheckUpdate() UpdateInfo {
 		TagName string `json:"tag_name"`
 		Body    string `json:"body"`
 		Assets  []struct {
-			Name string `json:"name"`
-			Size int64  `json:"size"`
-			URL  string `json:"browser_download_url"`
+			Name       string `json:"name"`
+			Size       int64  `json:"size"`
+			URL        string `json:"url"`
+			BrowserURL string `json:"browser_download_url"`
 		} `json:"assets"`
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
@@ -81,9 +82,16 @@ func (l *Launcher) CheckUpdate() UpdateInfo {
 	for _, a := range release.Assets {
 		switch a.Name {
 		case launcherAsset:
-			info.URL, info.AssetName, info.AssetSize = a.URL, a.Name, a.Size
+			info.URL = a.URL
+			if info.URL == "" {
+				info.URL = a.BrowserURL
+			}
+			info.AssetName, info.AssetSize = a.Name, a.Size
 		case sumsAsset:
 			info.SumsURL = a.URL
+			if info.SumsURL == "" {
+				info.SumsURL = a.BrowserURL
+			}
 		}
 	}
 	info.Available = info.URL != "" && versionGreater(info.Version, appVersion)
@@ -99,7 +107,7 @@ func (l *Launcher) ApplyUpdate(downloadURL, sumsURL string) (string, error) {
 		return "", errors.New("更新地址不合法")
 	}
 
-	tmp := filepath.Join(os.TempDir(), "NineRE-Starter-update.exe")
+	tmp := filepath.Join(os.TempDir(), "NineRE-Launcher-update.exe")
 	if err := downloadTo(downloadURL, tmp, 5*time.Minute); err != nil {
 		return "", errors.New("下载更新失败：" + err.Error())
 	}
@@ -120,7 +128,7 @@ func (l *Launcher) ApplyUpdate(downloadURL, sumsURL string) (string, error) {
 	}
 	exe, _ = filepath.Abs(exe)
 
-	helper := filepath.Join(os.TempDir(), "NineRE-Starter-update.cmd")
+	helper := filepath.Join(os.TempDir(), "NineRE-Launcher-update.cmd")
 	script := fmt.Sprintf(`@echo off
 setlocal
 :wait
@@ -158,7 +166,7 @@ func trustedDownloadURL(raw string) bool {
 		return false
 	}
 	host := strings.ToLower(u.Hostname())
-	return host == "github.com" || strings.HasSuffix(host, ".githubusercontent.com")
+	return host == "github.com" || host == "api.github.com" || strings.HasSuffix(host, ".githubusercontent.com")
 }
 
 func downloadTo(rawURL, path string, timeout time.Duration) error {
@@ -167,7 +175,10 @@ func downloadTo(rawURL, path string, timeout time.Duration) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("User-Agent", "NineRE-Starter/"+appVersion)
+	req.Header.Set("User-Agent", "NineRE-Launcher/"+appVersion)
+	if strings.Contains(rawURL, "api.github.com/") {
+		req.Header.Set("Accept", "application/octet-stream")
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -193,7 +204,10 @@ func fetchExpectedHash(rawURL, name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("User-Agent", "NineRE-Starter/"+appVersion)
+	req.Header.Set("User-Agent", "NineRE-Launcher/"+appVersion)
+	if strings.Contains(rawURL, "api.github.com/") {
+		req.Header.Set("Accept", "application/octet-stream")
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", err

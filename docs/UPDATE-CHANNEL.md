@@ -18,9 +18,9 @@
 4. GitHub Actions（`.github/workflows/release.yml`）在 `windows-latest` 上：
    - `bun install`
    - `bun run build -- -skip-installer`
-   - 把 `build/windows-amd64/NineRE Starter.exe` 复制为 `dist/NineRE-Starter.exe`，并复制一份 `dist/NineRegionsLauncher.exe`（旧版更新兼容）
+   - 把 `build/windows-amd64/NineRE Launcher.exe` 复制为 `dist/NineRE-Launcher.exe`，并复制 `dist/NineRE-Starter.exe`（0.1.1 兼容）与 `dist/NineRegionsLauncher.exe`（0.1.0 兼容）
    - 生成 `dist/SHA256SUMS`
-   - 用 `softprops/action-gh-release` 创建 Release 并上传两个资产
+   - 用 `softprops/action-gh-release` 创建 Release 并上传全部资产
 
 ## 启动器如何检查
 
@@ -29,11 +29,12 @@
 ```
 GET https://api.github.com/repos/FloatinFish/NineRE--Mygo-/releases/latest
 Accept: application/vnd.github+json
-User-Agent: NineRE-Starter/<version>
+User-Agent: NineRE-Launcher/<version>
 ```
 
 - 解析 `tag_name`（去掉前缀 `v`）与 `body`；
-- 在 `assets[]` 里找 `NineRE-Starter.exe` 与 `SHA256SUMS`；旧版（0.1.0）找的是 `NineRegionsLauncher.exe`，发布时两份都带；
+- 在 `assets[]` 里找 `NineRE-Launcher.exe` 与 `SHA256SUMS`；旧版（0.1.1）找 `NineRE-Starter.exe`，旧版（0.1.0）找 `NineRegionsLauncher.exe`，发布时三份都带；
+- 下载用资产的 `url`（`https://api.github.com/repos/.../releases/assets/<id>`）并带 `Accept: application/octet-stream`，不依赖 `browser_download_url`；`github.com` 被阻断但 `api.github.com` 可达时仍能更新；
 - 按语义化数字段比较 `tag_name` 与 `appVersion`；
 - 有新版时返回 `available=true`，前端把「更新启动器」按钮改为「更新到 vX.Y.Z」。
 
@@ -41,7 +42,7 @@ User-Agent: NineRE-Starter/<version>
 
 ## 启动器如何安装
 
-1. 用户确认后，`ApplyUpdate` 下载 exe 到 `%TEMP%\NineRE-Starter-update.exe`；
+1. 用户确认后，`ApplyUpdate` 下载 exe 到 `%TEMP%\NineRE-Launcher-update.exe`；
 2. 若 Release 带 `SHA256SUMS`，计算 SHA256 并比对；不一致则取消；
 3. 在 `%TEMP%` 写一个替换脚本，等待当前进程退出后：
    - `copy /y` 覆盖当前 exe；

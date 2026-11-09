@@ -1,4 +1,4 @@
-# NineRE Starter · MyGo 版
+# NineRE Launcher · MyGo 版
 
 用 MyGo（Go + WebView2）重写的 NineRE 便携版启动器。功能布局沿用 C# 版：
 左侧 LOGO + 账号，中间账号详情，右侧画面/音量/服务设置，底部服务端控制台。
@@ -18,7 +18,7 @@ $env:GOFLAGS = "-buildvcs=false"   # 仓库外层没有可用 git 元数据时�
 bun run build -- -skip-installer
 ```
 
-产物：`build/windows-amd64/NineRE Starter.exe`（约 12 MB，前端已嵌入）。
+产物：`build/windows-amd64/NineRE Launcher.exe`（约 12 MB，前端已嵌入）。
 
 `-skip-installer` 跳过 NSIS 安装包；便携版只需要 exe。
 
@@ -31,7 +31,7 @@ bun run build -- -skip-installer
 .\build.ps1 -DeployDir D:\NineRegions-Portable
 ```
 
-默认复制为 `NineRE Starter.exe`，不会覆盖现有启动器。
+默认复制为 `NineRE Launcher.exe`，不会覆盖现有启动器。
 
 ## 结构
 
@@ -56,7 +56,7 @@ BGM 用 HTML `<audio>`，自动播放靠 `PageOptions.Autoplay: AutoplayAllow`�
 
 ## 更新通道
 
-启动器检查 `FloatinFish/NineRE--Mygo-` 的最新 Release，下载 `NineRE-Starter.exe`，
+启动器检查 `FloatinFish/NineRE--Mygo-` 的最新 Release，下载 `NineRE-Launcher.exe`，
 用 `SHA256SUMS` 校验后自替换并重启。
 
 ## 与 C# 版的差异（尚未做）

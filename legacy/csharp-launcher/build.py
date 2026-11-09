@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""NineRE Starter构建：Roslyn csc + .NET Framework 4.8 参考程序集 → dist\\PalrLauncher.exe
+"""NineRE Launcher构建：Roslyn csc + .NET Framework 4.8 参考程序集 → dist\\PalrLauncher.exe
 
 用法：python tools/launcher/build.py
 """

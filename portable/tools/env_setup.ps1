@@ -253,7 +253,7 @@ if ((Test-Path $pgVer) -and (Test-Path (Join-Path $PgBin 'pg_ctl.exe'))) {
 
 # ── 9. 关键文件完整性 ───────────────────────────────────────
 $need = @(
-    'NineRE Starter.exe',
+    'NineRE Launcher.exe',
     'Server\nine-regions-backend.exe',
     'pgsql\bin\pg_ctl.exe',
     'Game\The Nine Regions\MC.exe'
@@ -269,7 +269,7 @@ Say ''
 Say '=============================================='
 if ($script:Issues.Count -eq 0) {
     Say (' 全部检查通过' + $(if ($script:Fixes -or $script:Fixed.Count) { '（已处理：' + ($script:Fixed -join '、') + '）' } else { '' })) 'Green'
-    Say ' 现在可以双击「NineRE Starter.exe」进入游戏。' 'Green'
+    Say ' 现在可以双击「NineRE Launcher.exe」进入游戏。' 'Green'
 } else {
     Say (' 有 ' + $script:Issues.Count + ' 项需要处理：' + ($script:Issues -join '、')) 'Red'
     Say ' 按上面的提示逐项处理后，再运行一次本工具确认。' 'Yellow'

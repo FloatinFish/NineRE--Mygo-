@@ -1,10 +1,10 @@
-# NineRE Starter (MyGo)
+# NineRE Launcher (MyGo)
 
 NineRE 便携版的启动器与便携版驱动文件。
 
 启动器用 [MyGo](https://github.com/egoist/mygo)（Go + WebView2）编写：功能布局沿用旧 C# 版，
 界面在 MyGo 前端里重写。更新通道走本仓库的 GitHub Releases：启动器检查最新 Release，
-下载 `NineRE-Starter.exe`，校验 `SHA256SUMS` 后自替换并重启。
+下载 `NineRE-Launcher.exe`，校验 `SHA256SUMS` 后自替换并重启。
 
 ## 仓库结构
 
@@ -28,7 +28,7 @@ bun install
 bun run build -- -skip-installer
 ```
 
-产物：`launcher/build/windows-amd64/NineRE Starter.exe`（约 12 MB，前端已嵌入）。
+产物：`launcher/build/windows-amd64/NineRE Launcher.exe`（约 12 MB，前端已嵌入）。
 
 也可以直接用脚本：
 
@@ -37,7 +37,7 @@ cd launcher
 .\build.ps1 -DeployDir D:\NineRegions-Portable
 ```
 
-`-DeployDir` 会把产物复制为便携包根目录的 `NineRE Starter.exe`，不会覆盖现有启动器。
+`-DeployDir` 会把产物复制为便携包根目录的 `NineRE Launcher.exe`，不会覆盖现有启动器。
 
 ## 发布与更新通道
 
@@ -45,13 +45,14 @@ cd launcher
 2. 提交并打 tag：
 
    ```bash
-   git tag v0.1.1
+   git tag v0.1.2
    git push origin main --tags
    ```
 
 3. `.github/workflows/release.yml` 在 Windows runner 上构建，生成 Release，并上传：
-   - `NineRE-Starter.exe`
-   - `NineRegionsLauncher.exe`（旧版更新用的兼容副本）
+   - `NineRE-Launcher.exe`
+   - `NineRE-Starter.exe`（0.1.1 旧版更新用的兼容副本）
+   - `NineRegionsLauncher.exe`（0.1.0 旧版更新用的兼容副本）
    - `SHA256SUMS`
 
 4. 已安装的启动器读取
@@ -67,7 +68,7 @@ cd launcher
 
 ```
 NineRegions-Portable/
-├─ NineRE Starter.exe                  ← launcher/build/windows-amd64/NineRE Starter.exe
+├─ NineRE Launcher.exe                  ← launcher/build/windows-amd64/NineRE Launcher.exe
 ├─ assets/                       ← 背景视频、BGM、LOGO（随游戏包提供）
 ├─ Game/The Nine Regions/        ← 游戏客户端
 ├─ Server/                       ← nine-regions-backend.exe 与运行数据

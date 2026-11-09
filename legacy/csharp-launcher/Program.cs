@@ -19,7 +19,7 @@ namespace PalrLauncher
                 _mutex = new Mutex(true, @"Global\PALRLauncher", out made);
                 if (!made)
                 {
-                    MessageBox.Show("NineRE Starter 已经在运行了。", "NineRE Starter",
+                    MessageBox.Show("NineRE Launcher 已经在运行了。", "NineRE Launcher",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                     return 0;
                 }
@@ -65,7 +65,7 @@ namespace PalrLauncher
             catch (Exception ex)
             {
                 Log("启动失败：" + ex);
-                MessageBox.Show("启动器启动失败：" + ex.Message, "NineRE Starter",
+                MessageBox.Show("启动器启动失败：" + ex.Message, "NineRE Launcher",
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return 1;
             }

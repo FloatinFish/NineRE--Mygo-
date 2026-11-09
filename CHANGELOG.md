@@ -1,9 +1,17 @@
 # Changelog
 
+## 0.1.2 - 2026-11-09
+
+- 启动器正式定名 NineRE Launcher；窗口标题、应用名、exe 名称同步更新。
+- 更新下载改用 GitHub API 资产端点（`Accept: application/octet-stream`），
+  在 `github.com` 下载被阻断但 `api.github.com` 可达的网络下仍可更新。
+- 发布携带 `NineRE-Launcher.exe`，以及 `NineRE-Starter.exe`（0.1.1 兼容）
+  与 `NineRegionsLauncher.exe`（0.1.0 兼容）。
+
 ## 0.1.1 - 2026-11-09
 
-- 启动器更名为 NineRE Starter，窗口标题、应用名、exe 名称同步更新。
-- 更新资产改为 `NineRE-Starter.exe`；为 0.1.0 旧版保留 `NineRegionsLauncher.exe` 兼容副本。
+- 启动器更名，窗口标题、应用名、exe 名称同步更新。
+- 更新资产包含主程序与 0.1.0 兼容副本。
 - 文档与界面文字统一使用 NineRE。
 
 ## 0.1.0 - 2026-11-09

@@ -66,7 +66,7 @@ namespace PalrLauncher
             _store = new Store(_paths);
             _services = new Services(_paths);
 
-            Title = "NineRE Starter";
+            Title = "NineRE Launcher";
             /**
              * ★ 2026-10-30 用户反馈「关闭/缩小按钮失效」根因：
              * 显示器 125% 缩放时，WPF 把内容按 1.25 倍渲染（1180 DIP → 1475 px），

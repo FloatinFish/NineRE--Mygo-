@@ -15,7 +15,7 @@ var mainWindow *mygo.Window
 func main() {
 	l := NewLauncher()
 	setupLog(l.paths.ExeDir)
-	log.Printf("NineRE Starter 启动：mode=%s root=%s exeDir=%s", l.paths.Mode, l.paths.Root, l.paths.ExeDir)
+	log.Printf("NineRE Launcher 启动：mode=%s root=%s exeDir=%s", l.paths.Mode, l.paths.Root, l.paths.ExeDir)
 
 	// 大体积的 mp4/m4a 不走 WebView2 的自定义协议，走 127.0.0.1 回环 HTTP。
 	if l.assetDir != "" {
@@ -46,7 +46,7 @@ func main() {
 
 	mygo.App.WhenReady(func() {
 		mainWindow = mygo.NewWindow(mygo.WindowOptions{
-			Title:           "NineRE Starter",
+			Title:           "NineRE Launcher",
 			Width:           1180,
 			Height:          720,
 			MinWidth:        1000,

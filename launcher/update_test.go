@@ -25,8 +25,9 @@ func TestVersionGreater(t *testing.T) {
 
 func TestTrustedDownloadURL(t *testing.T) {
 	ok := []string{
-		"https://github.com/FloatinFish/NineRE--Mygo-/releases/download/v0.1.1/NineRE-Starter.exe",
+		"https://github.com/FloatinFish/NineRE--Mygo-/releases/download/v0.1.1/NineRE-Launcher.exe",
 		"https://objects.githubusercontent.com/x/y.exe",
+		"https://api.github.com/repos/FloatinFish/NineRE--Mygo-/releases/assets/123",
 	}
 	bad := []string{
 		"http://github.com/x/y.exe",
