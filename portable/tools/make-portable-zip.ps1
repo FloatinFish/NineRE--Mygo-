@@ -31,6 +31,7 @@ Write-Host "[..] staging -> $stage"
 Copy-Item (Join-Path $Root "NineRE Launcher.exe") $stage -Force
 Copy-Item (Join-Path $Root "README.txt") $stage -Force
 Copy-Item (Join-Path $Root "assets") (Join-Path $stage "assets") -Recurse -Force
+Remove-Item (Join-Path $stage "assets\announce.txt") -Force -ErrorAction SilentlyContinue
 Copy-Item (Join-Path $Root "pgsql") (Join-Path $stage "pgsql") -Recurse -Force
 Copy-Item (Join-Path $Root "pgdata-template") (Join-Path $stage "pgdata-template") -Recurse -Force
 
@@ -41,6 +42,12 @@ Remove-Item (Join-Path $serverDst "data") -Recurse -Force -ErrorAction SilentlyC
 Remove-Item (Join-Path $serverDst "logs") -Recurse -Force -ErrorAction SilentlyContinue
 Get-ChildItem $serverDst -Filter "*.log" -File -ErrorAction SilentlyContinue | Remove-Item -Force
 New-Item -ItemType Directory -Force (Join-Path $serverDst "data") | Out-Null
+# Never ship this machine's DB credentials or account hints.
+Remove-Item (Join-Path $serverDst ".env") -Force -ErrorAction SilentlyContinue
+$cleanDb = @{ host = "localhost"; username = "postgres"; password = "postgres"; database = "postgres" } | ConvertTo-Json
+New-Item -ItemType Directory -Force (Join-Path $serverDst "setting") | Out-Null
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText((Join-Path $serverDst "setting\db.json"), $cleanDb, $utf8NoBom)
 
 $toolsDst = Join-Path $stage "tools"
 Copy-Item (Join-Path $Root "tools") $toolsDst -Recurse -Force
