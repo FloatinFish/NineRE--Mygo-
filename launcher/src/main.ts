@@ -284,10 +284,11 @@ async function selectAccount(name: string) {
 }
 
 async function ensureServices() {
+  toast("正在部署/检查本地服务…");
   try {
     await Launcher.ensureServices();
-  } catch {
-    /* 错误由快照里的服务状态体现 */
+  } catch (e) {
+    toast("本地服务部署失败：" + errText(e));
   }
   await refresh();
 }

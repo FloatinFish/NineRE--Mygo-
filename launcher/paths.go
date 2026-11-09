@@ -10,9 +10,10 @@ import (
 type LayoutMode string
 
 const (
-	ModePortable LayoutMode = "portable"
-	ModeDev      LayoutMode = "dev"
-	ModeUnknown  LayoutMode = "unknown"
+	ModePortable   LayoutMode = "portable"
+	ModeGameFolder LayoutMode = "gamefolder"
+	ModeDev        LayoutMode = "dev"
+	ModeUnknown    LayoutMode = "unknown"
 )
 
 // Paths 是启动器用到的全部目录与文件位置。
@@ -74,6 +75,11 @@ func DetectPaths() Paths {
 		return fillPortable(p, exeDir)
 	}
 	if exists(filepath.Join(exeDir, "MC.exe")) {
+		// 解压到客户端文件夹：MC.exe 与 Server/、pgsql/、pgdata/ 同级。
+		if exists(filepath.Join(exeDir, "Server", "nine-regions-backend.exe")) ||
+			exists(filepath.Join(exeDir, "pgsql", "bin", "pg_ctl.exe")) {
+			return fillGameFolder(p, exeDir)
+		}
 		return fillDev(p, filepath.Dir(exeDir), exeDir)
 	}
 
@@ -114,6 +120,18 @@ func fillPortable(p Paths, root string) Paths {
 	p.Mode = ModePortable
 	p.Root = root
 	p.GameDir = filepath.Join(root, "Game", "The Nine Regions")
+	p.ServerDir = filepath.Join(root, "Server")
+	p.PgBin = filepath.Join(root, "pgsql", "bin")
+	p.PgData = filepath.Join(root, "pgdata")
+	p.PgLog = filepath.Join(root, "pgdata.log")
+	p.RunLog = filepath.Join(p.ServerDir, "run.log")
+	return p
+}
+
+func fillGameFolder(p Paths, root string) Paths {
+	p.Mode = ModeGameFolder
+	p.Root = root
+	p.GameDir = root
 	p.ServerDir = filepath.Join(root, "Server")
 	p.PgBin = filepath.Join(root, "pgsql", "bin")
 	p.PgData = filepath.Join(root, "pgdata")

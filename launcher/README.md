@@ -33,6 +33,19 @@ bun run build -- -skip-installer
 
 默认复制为 `NineRE Launcher.exe`，不会覆盖现有启动器。
 
+## 首次启动 / 便携整合包
+
+把整合包解压到游戏文件夹（`MC.exe` 同级）或便携包根目录。首次启动会自动：
+
+1. 识别布局：`Game/The Nine Regions/MC.exe` 或 `MC.exe` 与 `Server/`、`pgsql/` 同级；
+2. 如果 `pgdata` 不存在，复制 `pgdata-template` → `pgdata`（空库，已建 `mc` schema）；
+3. 创建 `Server/data`；缺 `setting/db.json` 时写默认 `localhost/postgres/postgres`；
+4. 启动 PostgreSQL + 游戏服，等待 `/ver` 就绪；
+5. 根目录若存在旧版 WPF 启动器（`PalrLauncher.exe` 等，体积 < 2 MB），结束后台进程并移到 `%TEMP%\NineRE-legacy`。
+
+整合包由 `portable/tools/make-portable-zip.ps1` 组装；干净数据库模板由
+`portable/tools/make-clean-pgdata.ps1` 生成。游戏客户端不包含在包内。
+
 ## 结构
 
 ```
@@ -44,6 +57,7 @@ services.go     PostgreSQL + 游戏服 启停/就绪/日志
 stats.go        /palrstats 账号资料
 launch.go       启动凭据、启动游戏、隐藏 Dummy 窗口
 launcher.go     暴露给前端的绑定服务（mygo.Bind）
+bootstrap.go    首次部署（pgdata 模板）、旧版 WPF 接管
 update.go       GitHub Release 检查 / 下载 / SHA256 / 自替换
 version.go      当前版本号
 index.html      页面骨架

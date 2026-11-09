@@ -21,6 +21,12 @@ NineRegions-Portable/
    └─ check-services.ps1         只检查状态
 ```
 
+## 干净数据库模板
+
+`pgdata-template` 是空库模板：`initdb` + `CREATE SCHEMA mc`；后端首次启动会自动创建
+`mc.player`、`mc.player_info`、`mc.card`、`mc.card_library`、`mc.deck`、`mc.user_library`
+六张表。生成脚本：`tools/make-clean-pgdata.ps1`。
+
 ## 端口
 
 | 端口 | 用途 |

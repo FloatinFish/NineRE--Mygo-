@@ -10,11 +10,13 @@ NineRE 本地整合版（便携）
    MicrosoftEdgeWebView2Setup.exe 放到 tools\ 下，工具会直接用它静默安装。
 2. 检查全绿后，再双击「NineRE Launcher.exe」。
 3. 整个便携包可以整体拷到别的电脑（换盘符也行），
-   但必须**整包拷贝**：pgsql + pgdata + Server + Game 一个都不能少。
+   pgsql + Server + Game + pgdata-template 不能少。
+   没有 pgdata 时，首次启动会从 pgdata-template 自动初始化。
 
 【怎么玩】
 1. 双击「NineRE Launcher.exe」。
-   启动器会先拉起 PostgreSQL 与本地游戏服，三项都变「就绪」后按钮才可点。
+   首次启动会自动初始化数据库（pgdata-template → pgdata），然后拉起 PostgreSQL 与本地游戏服；
+   三项都变「就绪」后按钮才可点。
 2. 左侧选账号 → 点「进入游戏」（或按回车）。
    游戏会直接进入主城，不再出现任何登录/选号界面。
 3. 想换账号：关闭游戏 → 启动器窗口会自动恢复 → 选另一个账号再进。
@@ -44,6 +46,7 @@ NineRE 本地整合版（便携）
    Server\                  本地服务端（账号/卡牌等数据在 Server\data 与 pgdata）
    pgsql\                   便携版 PostgreSQL 运行环境
    pgdata\                  PostgreSQL 数据目录（游戏进度、账号、卡牌都在这里）
+   pgdata-template\         首次启动用的空库模板（含 mc schema，不含玩家数据）
    assets\                  启动器背景（登录场景循环视频）
    NineRE Launcher.exe             启动器
    服务端监视器（可选）.vbs  可选：隐藏窗口常驻监视器（直接双击 MC.exe 时也能拉起服务）
@@ -52,6 +55,7 @@ NineRE 本地整合版（便携）
    - 一直进不去：看启动器底部控制台；服务端到账问题看 Server\run.log。
    - 启动器提示缺少 WebView2：运行一次「环境检查.bat」，按提示自动安装；
      离线机器把微软的 WebView2 安装器放到 tools\ 下再运行。
+   - 旧版 WPF 启动器：首次启动会自动接管并移出便携包（备份在 %TEMP%\NineRE-legacy）。
    - 数据库启动失败：确认 pgdata 目录完整、路径没有只读权限。
    - 想重置进度：关闭游戏与服务端后删除 pgdata 会丢档，请先备份。
    - 彻底关闭：先结束 nine-regions-backend.exe 与 postgres.exe。

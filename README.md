@@ -62,6 +62,17 @@ cd launcher
 
 详细流程与失败处理见 [`docs/UPDATE-CHANNEL.md`](docs/UPDATE-CHANNEL.md)。
 
+## 便携整合包（傻瓜版）
+
+`portable/tools/make-portable-zip.ps1` 从一份完整便携包组装 `NineRE-Portable.zip`：
+启动器 + Server + pgsql + pgdata-template + tools + assets。用户把 ZIP 解压到游戏文件夹
+（`MC.exe` 同级）或便携包根目录，首次启动会自动初始化数据库并拉起服务。
+
+- `pgdata-template` 由 `portable/tools/make-clean-pgdata.ps1` 生成：`initdb` + `CREATE SCHEMA mc`，
+  后端首次启动自动建表；不含任何玩家数据。
+- 游戏客户端（`Game/`，约 3.2 GB）不包含在 ZIP 内，用户需自备。
+- 旧版 WPF 启动器（根目录、体积 < 2 MB）会在首次启动时被接管并移到 `%TEMP%\NineRE-legacy`。
+
 ## 组装便携包
 
 仓库不包含游戏本体、服务端二进制、PostgreSQL 与 `assets/`。把本仓库的产物放进便携包：

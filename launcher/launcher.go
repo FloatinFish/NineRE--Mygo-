@@ -73,6 +73,7 @@ func NewLauncher() *Launcher {
 	p := DetectPaths()
 	l := &Launcher{paths: p, store: NewStore(p), stats: map[string]AccountStat{}}
 	l.assetDir = findAssetDir(p)
+	takeoverLegacyLaunchers(p)
 	return l
 }
 
@@ -251,10 +252,20 @@ func (l *Launcher) EnsureServices() (ServiceState, error) {
 	if l.paths.Mode == ModeUnknown {
 		return ServiceState{Message: "找不到游戏目录"}, errors.New("找不到游戏目录")
 	}
+	if err := ensureRuntime(l.paths); err != nil {
+		l.mu.Lock()
+		l.svc = ServiceState{Message: err.Error()}
+		l.svcAt = time.Now()
+		l.mu.Unlock()
+		return l.svc, err
+	}
 	return ensureAll(l.paths, nil), nil
 }
 
 func (l *Launcher) RestartServer() ServiceState {
+	if err := ensureRuntime(l.paths); err != nil {
+		return ServiceState{Message: err.Error()}
+	}
 	killServer()
 	return ensureAll(l.paths, nil)
 }

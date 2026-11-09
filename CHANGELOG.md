@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3 - 2026-11-09
+
+- 首次启动自动部署：`pgdata-template` → `pgdata`，补 `Server/data` 与默认 `setting/db.json`。
+- 支持解压到游戏文件夹的新布局：`MC.exe` 与 `Server/`、`pgsql/`、`pgdata/` 同级。
+- 旧版 WPF 启动器自动接管：结束其进程并移到 `%TEMP%\NineRE-legacy`。
+- 新增 `portable/tools/make-clean-pgdata.ps1` 与 `make-portable-zip.ps1`。
+
 ## 0.1.2 - 2026-11-09
 
 - 启动器正式定名 NineRE Launcher；窗口标题、应用名、exe 名称同步更新。
