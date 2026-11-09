@@ -6,6 +6,7 @@
 - 支持解压到游戏文件夹的新布局：`MC.exe` 与 `Server/`、`pgsql/`、`pgdata/` 同级。
 - 旧版 WPF 启动器自动接管：结束其进程并移到 `%TEMP%\NineRE-legacy`。
 - 新增 `portable/tools/make-clean-pgdata.ps1` 与 `make-portable-zip.ps1`。
+- Release 只保留 `NineRE-Launcher.exe`、`NineRE-Portable.zip` 与 `SHA256SUMS`；移除 0.1.0/0.1.1 兼容副本。
 
 ## 0.1.2 - 2026-11-09
 

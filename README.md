@@ -50,9 +50,8 @@ cd launcher
    ```
 
 3. `.github/workflows/release.yml` 在 Windows runner 上构建，生成 Release，并上传：
-   - `NineRE-Launcher.exe`
-   - `NineRE-Starter.exe`（0.1.1 旧版更新用的兼容副本）
-   - `NineRegionsLauncher.exe`（0.1.0 旧版更新用的兼容副本）
+   - `NineRE-Launcher.exe`（启动器本体 / 自动更新下载源）
+   - `NineRE-Portable.zip`（手动上传的便携整合包）
    - `SHA256SUMS`
 
 4. 已安装的启动器读取

@@ -18,7 +18,7 @@
 4. GitHub Actions（`.github/workflows/release.yml`）在 `windows-latest` 上：
    - `bun install`
    - `bun run build -- -skip-installer`
-   - 把 `build/windows-amd64/NineRE Launcher.exe` 复制为 `dist/NineRE-Launcher.exe`，并复制 `dist/NineRE-Starter.exe`（0.1.1 兼容）与 `dist/NineRegionsLauncher.exe`（0.1.0 兼容）
+   - 把 `build/windows-amd64/NineRE Launcher.exe` 复制为 `dist/NineRE-Launcher.exe`；便携整合包 `NineRE-Portable.zip` 由 `make-portable-zip.ps1` 生成后手动上传
    - 生成 `dist/SHA256SUMS`
    - 用 `softprops/action-gh-release` 创建 Release 并上传全部资产
 

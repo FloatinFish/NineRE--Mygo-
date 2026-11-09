@@ -39,13 +39,8 @@ jobs:
           $exe = Get-ChildItem -Path launcher/build/windows-amd64 -Filter *.exe | Select-Object -First 1
           if (-not $exe) { throw "launcher exe not found" }
           Copy-Item $exe.FullName dist/NineRE-Launcher.exe -Force
-          Copy-Item $exe.FullName dist/NineRE-Starter.exe -Force
-          Copy-Item $exe.FullName dist/NineRegionsLauncher.exe -Force
           $h1 = (Get-FileHash dist/NineRE-Launcher.exe -Algorithm SHA256).Hash.ToLower()
-          $h2 = (Get-FileHash dist/NineRE-Starter.exe -Algorithm SHA256).Hash.ToLower()
-          $h3 = (Get-FileHash dist/NineRegionsLauncher.exe -Algorithm SHA256).Hash.ToLower()
-          @("$h1  NineRE-Launcher.exe", "$h2  NineRE-Starter.exe", "$h3  NineRegionsLauncher.exe") |
-            Out-File -FilePath dist/SHA256SUMS -Encoding ascii
+          "$h1  NineRE-Launcher.exe" | Out-File -FilePath dist/SHA256SUMS -Encoding ascii
           Get-Content dist/SHA256SUMS
 
       - name: Publish release
@@ -53,7 +48,5 @@ jobs:
         with:
           files: |
             dist/NineRE-Launcher.exe
-            dist/NineRE-Starter.exe
-            dist/NineRegionsLauncher.exe
             dist/SHA256SUMS
           generate_release_notes: true
