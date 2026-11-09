@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""九野启动器构建：Roslyn csc + .NET Framework 4.8 参考程序集 → dist\\PalrLauncher.exe
+"""NineRE Starter构建：Roslyn csc + .NET Framework 4.8 参考程序集 → dist\\PalrLauncher.exe
 
 用法：python tools/launcher/build.py
 """

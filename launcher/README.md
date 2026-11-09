@@ -1,6 +1,6 @@
-# 九野启动器 · MyGo 版
+# NineRE Starter · MyGo 版
 
-用 MyGo（Go + WebView2）重写的九野便携版启动器。功能布局沿用 C# 版：
+用 MyGo（Go + WebView2）重写的 NineRE 便携版启动器。功能布局沿用 C# 版：
 左侧 LOGO + 账号，中间账号详情，右侧画面/音量/服务设置，底部服务端控制台。
 UI 样式在 MyGo 前端里重新实现（深色金箔 + 玻璃面板 + 背景视频）。
 
@@ -18,7 +18,7 @@ $env:GOFLAGS = "-buildvcs=false"   # 仓库外层没有可用 git 元数据时�
 bun run build -- -skip-installer
 ```
 
-产物：`build/windows-amd64/九野启动器.exe`（约 12 MB，前端已嵌入）。
+产物：`build/windows-amd64/NineRE Starter.exe`（约 12 MB，前端已嵌入）。
 
 `-skip-installer` 跳过 NSIS 安装包；便携版只需要 exe。
 
@@ -31,7 +31,7 @@ bun run build -- -skip-installer
 .\build.ps1 -DeployDir D:\NineRegions-Portable
 ```
 
-默认复制为 `九野启动器-mygo.exe`，不会覆盖现有 `启动九野.exe`。
+默认复制为 `NineRE Starter.exe`，不会覆盖现有启动器。
 
 ## 结构
 
@@ -44,6 +44,8 @@ services.go     PostgreSQL + 游戏服 启停/就绪/日志
 stats.go        /palrstats 账号资料
 launch.go       启动凭据、启动游戏、隐藏 Dummy 窗口
 launcher.go     暴露给前端的绑定服务（mygo.Bind）
+update.go       GitHub Release 检查 / 下载 / SHA256 / 自替换
+version.go      当前版本号
 index.html      页面骨架
 src/main.ts     交互与状态轮询
 src/style.css   全部样式
@@ -52,12 +54,16 @@ src/style.css   全部样式
 视频/音乐走 `127.0.0.1` 回环 HTTP（MyGo 官方建议；WebKitGTK 不支持自定义协议播媒体）。
 BGM 用 HTML `<audio>`，自动播放靠 `PageOptions.Autoplay: AutoplayAllow`。
 
+## 更新通道
+
+启动器检查 `FloatinFish/NineRE--Mygo-` 的最新 Release，下载 `NineRE-Starter.exe`，
+用 `SHA256SUMS` 校验后自替换并重启。
+
 ## 与 C# 版的差异（尚未做）
 
-- 「更新启动器」仍是占位（C# 版也是占位）。
 - 未显示热修写回的登录状态（`palr_login_state.txt`）。
 - 服务未就绪时不会自动展开控制台。
-- 启动器自身不写 `launcher.log`，只写 `launcher-mygo.log`。
+- 启动器只写 `launcher-mygo.log`。
 
 ## 注意
 

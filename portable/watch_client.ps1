@@ -1,4 +1,4 @@
-# 九野本地整合版：服务监视器（可选）
+# NineRE 本地整合版：服务监视器（可选）
 # 直接双击 Game\The Nine Regions\MC.exe 时，自动确保 PostgreSQL(5432) 与服务端(8800)。
 # 由同目录 VBS 以隐藏窗口启动；日志：同目录 watch_client.log
 $ErrorActionPreference = 'SilentlyContinue'

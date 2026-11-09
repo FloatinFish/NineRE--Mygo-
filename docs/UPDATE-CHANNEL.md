@@ -18,7 +18,7 @@
 4. GitHub Actions（`.github/workflows/release.yml`）在 `windows-latest` 上：
    - `bun install`
    - `bun run build -- -skip-installer`
-   - 把 `build/windows-amd64/九野启动器.exe` 复制为 `dist/NineRegionsLauncher.exe`
+   - 把 `build/windows-amd64/NineRE Starter.exe` 复制为 `dist/NineRE-Starter.exe`，并复制一份 `dist/NineRegionsLauncher.exe`（旧版更新兼容）
    - 生成 `dist/SHA256SUMS`
    - 用 `softprops/action-gh-release` 创建 Release 并上传两个资产
 
@@ -29,11 +29,11 @@
 ```
 GET https://api.github.com/repos/FloatinFish/NineRE--Mygo-/releases/latest
 Accept: application/vnd.github+json
-User-Agent: NineRE-Launcher/<version>
+User-Agent: NineRE-Starter/<version>
 ```
 
 - 解析 `tag_name`（去掉前缀 `v`）与 `body`；
-- 在 `assets[]` 里找 `NineRegionsLauncher.exe` 与 `SHA256SUMS`；
+- 在 `assets[]` 里找 `NineRE-Starter.exe` 与 `SHA256SUMS`；旧版（0.1.0）找的是 `NineRegionsLauncher.exe`，发布时两份都带；
 - 按语义化数字段比较 `tag_name` 与 `appVersion`；
 - 有新版时返回 `available=true`，前端把「更新启动器」按钮改为「更新到 vX.Y.Z」。
 
@@ -41,7 +41,7 @@ User-Agent: NineRE-Launcher/<version>
 
 ## 启动器如何安装
 
-1. 用户确认后，`ApplyUpdate` 下载 exe 到 `%TEMP%\NineRegionsLauncher-update.exe`；
+1. 用户确认后，`ApplyUpdate` 下载 exe 到 `%TEMP%\NineRE-Starter-update.exe`；
 2. 若 Release 带 `SHA256SUMS`，计算 SHA256 并比对；不一致则取消；
 3. 在 `%TEMP%` 写一个替换脚本，等待当前进程退出后：
    - `copy /y` 覆盖当前 exe；

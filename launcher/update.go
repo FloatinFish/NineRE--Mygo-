@@ -22,7 +22,7 @@ import (
 const (
 	repoSlug      = "FloatinFish/NineRE--Mygo-"
 	releaseAPI    = "https://api.github.com/repos/" + repoSlug + "/releases/latest"
-	launcherAsset = "NineRegionsLauncher.exe"
+	launcherAsset = "NineRE-Starter.exe"
 	sumsAsset     = "SHA256SUMS"
 )
 
@@ -48,7 +48,7 @@ func (l *Launcher) CheckUpdate() UpdateInfo {
 		return info
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
-	req.Header.Set("User-Agent", "NineRE-Launcher/"+appVersion)
+	req.Header.Set("User-Agent", "NineRE-Starter/"+appVersion)
 	resp, err := client.Do(req)
 	if err != nil {
 		info.Error = "检查更新失败：" + err.Error()
@@ -99,7 +99,7 @@ func (l *Launcher) ApplyUpdate(downloadURL, sumsURL string) (string, error) {
 		return "", errors.New("更新地址不合法")
 	}
 
-	tmp := filepath.Join(os.TempDir(), "NineRegionsLauncher-update.exe")
+	tmp := filepath.Join(os.TempDir(), "NineRE-Starter-update.exe")
 	if err := downloadTo(downloadURL, tmp, 5*time.Minute); err != nil {
 		return "", errors.New("下载更新失败：" + err.Error())
 	}
@@ -120,7 +120,7 @@ func (l *Launcher) ApplyUpdate(downloadURL, sumsURL string) (string, error) {
 	}
 	exe, _ = filepath.Abs(exe)
 
-	helper := filepath.Join(os.TempDir(), "NineRegionsLauncher-update.cmd")
+	helper := filepath.Join(os.TempDir(), "NineRE-Starter-update.cmd")
 	script := fmt.Sprintf(`@echo off
 setlocal
 :wait
@@ -167,7 +167,7 @@ func downloadTo(rawURL, path string, timeout time.Duration) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("User-Agent", "NineRE-Launcher/"+appVersion)
+	req.Header.Set("User-Agent", "NineRE-Starter/"+appVersion)
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
@@ -193,7 +193,7 @@ func fetchExpectedHash(rawURL, name string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("User-Agent", "NineRE-Launcher/"+appVersion)
+	req.Header.Set("User-Agent", "NineRE-Starter/"+appVersion)
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", err

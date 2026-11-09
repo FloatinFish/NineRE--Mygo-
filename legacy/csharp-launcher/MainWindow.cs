@@ -66,7 +66,7 @@ namespace PalrLauncher
             _store = new Store(_paths);
             _services = new Services(_paths);
 
-            Title = "九野 · 本地版";
+            Title = "NineRE Starter";
             /**
              * ★ 2026-10-30 用户反馈「关闭/缩小按钮失效」根因：
              * 显示器 125% 缩放时，WPF 把内容按 1.25 倍渲染（1180 DIP → 1475 px），
@@ -366,7 +366,7 @@ namespace PalrLauncher
                 }
                 catch { }
             }
-            var t = Theme.Text("九野", 30, Theme.Gold, FontWeights.Bold, Theme.Serif);
+            var t = Theme.Text("NineRE", 30, Theme.Gold, FontWeights.Bold, Theme.Serif);
             t.Margin = new Thickness(4, 10, 0, 10);
             return t;
         }
@@ -1095,7 +1095,7 @@ namespace PalrLauncher
             _statusText = Theme.Text("准备中…", 11.5, Theme.TextSecondary);
             _statusText.VerticalAlignment = VerticalAlignment.Center;
             g.Children.Add(_statusText);
-            var ver = Theme.Text("九野本地版 · 启动器", 11, Theme.TextMuted);
+            var ver = Theme.Text("NineRE · 启动器", 11, Theme.TextMuted);
             ver.VerticalAlignment = VerticalAlignment.Center;
             Grid.SetColumn(ver, 1);
             g.Children.Add(ver);

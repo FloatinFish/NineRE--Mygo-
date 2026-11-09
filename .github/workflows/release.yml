@@ -38,15 +38,19 @@ jobs:
           New-Item -ItemType Directory -Force dist | Out-Null
           $exe = Get-ChildItem -Path launcher/build/windows-amd64 -Filter *.exe | Select-Object -First 1
           if (-not $exe) { throw "launcher exe not found" }
+          Copy-Item $exe.FullName dist/NineRE-Starter.exe -Force
           Copy-Item $exe.FullName dist/NineRegionsLauncher.exe -Force
-          $hash = (Get-FileHash dist/NineRegionsLauncher.exe -Algorithm SHA256).Hash.ToLower()
-          "$hash  NineRegionsLauncher.exe" | Out-File -FilePath dist/SHA256SUMS -Encoding ascii
+          $h1 = (Get-FileHash dist/NineRE-Starter.exe -Algorithm SHA256).Hash.ToLower()
+          $h2 = (Get-FileHash dist/NineRegionsLauncher.exe -Algorithm SHA256).Hash.ToLower()
+          @("$h1  NineRE-Starter.exe", "$h2  NineRegionsLauncher.exe") |
+            Out-File -FilePath dist/SHA256SUMS -Encoding ascii
           Get-Content dist/SHA256SUMS
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
           files: |
+            dist/NineRE-Starter.exe
             dist/NineRegionsLauncher.exe
             dist/SHA256SUMS
           generate_release_notes: true

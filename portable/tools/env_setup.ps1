@@ -1,6 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 <#
-  九野便携版 · 运行环境检查 / 部署工具
+  NineRE 便携版 · 运行环境检查 / 部署工具
   ------------------------------------------------------------
   为什么需要它：启动器本身是 .NET Framework 4.8 的 WPF 程序，
   如果目标电脑缺 .NET / VC++ 运行库，连启动器都打不开——所以把检查
@@ -60,7 +60,7 @@ function Ask([string]$question) {
 }
 
 Say '=============================================='
-Say ' 九野便携版 · 运行环境检查'
+Say ' NineRE 便携版 · 运行环境检查'
 Say '=============================================='
 Say ("目录：" + $Root)
 Say ''
@@ -253,7 +253,7 @@ if ((Test-Path $pgVer) -and (Test-Path (Join-Path $PgBin 'pg_ctl.exe'))) {
 
 # ── 9. 关键文件完整性 ───────────────────────────────────────
 $need = @(
-    '启动九野.exe',
+    'NineRE Starter.exe',
     'Server\nine-regions-backend.exe',
     'pgsql\bin\pg_ctl.exe',
     'Game\The Nine Regions\MC.exe'
@@ -269,7 +269,7 @@ Say ''
 Say '=============================================='
 if ($script:Issues.Count -eq 0) {
     Say (' 全部检查通过' + $(if ($script:Fixes -or $script:Fixed.Count) { '（已处理：' + ($script:Fixed -join '、') + '）' } else { '' })) 'Green'
-    Say ' 现在可以双击「启动九野.exe」进入游戏。' 'Green'
+    Say ' 现在可以双击「NineRE Starter.exe」进入游戏。' 'Green'
 } else {
     Say (' 有 ' + $script:Issues.Count + ' 项需要处理：' + ($script:Issues -join '、')) 'Red'
     Say ' 按上面的提示逐项处理后，再运行一次本工具确认。' 'Yellow'

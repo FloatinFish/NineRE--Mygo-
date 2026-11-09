@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 - 2026-11-09
+
+- 启动器更名为 NineRE Starter，窗口标题、应用名、exe 名称同步更新。
+- 更新资产改为 `NineRE-Starter.exe`；为 0.1.0 旧版保留 `NineRegionsLauncher.exe` 兼容副本。
+- 文档与界面文字统一使用 NineRE。
+
 ## 0.1.0 - 2026-11-09
 
 - 首个 MyGo 启动器版本：沿用 C# 版功能布局，界面在 MyGo 前端重写。
