@@ -68,6 +68,19 @@ src/style.css   全部样式
 视频/音乐走 `127.0.0.1` 回环 HTTP（MyGo 官方建议；WebKitGTK 不支持自定义协议播媒体）。
 BGM 用 HTML `<audio>`，自动播放靠 `PageOptions.Autoplay: AutoplayAllow`。
 
+## 账号数据（Go 直连）
+
+启动器直接读写真实账号数据，不再依赖 Node 的 `/palrstats` / `/palracc`：
+
+- 读：`Server/data/accounts.json`（账号名 → uid）、`ladder.json`、`pveProgress.json`，
+  以及 PostgreSQL `mc.player` / `mc.player_info` / `mc.card_library`。
+- 写：删除账号时按启动器名单**直接对账** `accounts.json`（`server_accounts.go`，
+  写前留 `.bak`）；Node 的 `AccountStore` 每次读写前检查文件 mtime，自动重载，
+  不会把旧内存表写回。
+- 新增账号：本地账号库先落盘；首次进游戏由游戏服 `/logindev` 自动建档（战斗引擎未动）。
+
+`/palrstats` 只作回退。界面上会区分「未在服务端登记」「已登记 · 无存档」「正常」。
+
 ## 反馈
 
 公告右侧的 GitHub 图标打开反馈弹窗。提交时在默认浏览器打开预填好的 Issue 页面

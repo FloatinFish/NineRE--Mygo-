@@ -67,7 +67,7 @@ func pgReady(p Paths) bool {
 	if !exists(exe) {
 		return portOpen(PgPort, 400*time.Millisecond)
 	}
-	cmd := hiddenCmd(exe, "-h", "127.0.0.1", "-p", "5432")
+	cmd := hiddenCmd(exe, "-h", "127.0.0.1", "-p", "5432", "-U", "postgres")
 	cmd.Dir = p.PgBin
 	done := make(chan error, 1)
 	go func() { done <- cmd.Run() }()
@@ -108,14 +108,22 @@ func ensurePostgres(p Paths, st *ServiceState) bool {
 	return false
 }
 
-func ensureServer(p Paths, st *ServiceState) bool {
+func ensureServer(p Paths, st *ServiceState, backend string) bool {
 	if httpOK(verURL, 1200*time.Millisecond) && portOpen(WsPort, 400*time.Millisecond) {
 		st.Server = true
 		st.Http = true
 		return true
 	}
-	if !exists(p.ServerExe()) {
-		st.Message = "找不到服务端：" + p.ServerExe()
+	exe := p.ServerExe()
+	if backend == "go" {
+		exe = p.GoServerExe()
+	}
+	if !exists(exe) {
+		if backend == "go" {
+			st.Message = "找不到 GO 服务端：" + exe + "（把 tools/backend-go/backend-go.exe 放到 Server 目录）"
+		} else {
+			st.Message = "找不到服务端：" + exe
+		}
 		return false
 	}
 	f, err := os.OpenFile(p.RunLog, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
@@ -123,8 +131,13 @@ func ensureServer(p Paths, st *ServiceState) bool {
 		st.Message = "无法写 run.log：" + err.Error()
 		return false
 	}
-	cmd := hiddenCmd(p.ServerExe())
+	cmd := hiddenCmd(exe)
 	cmd.Dir = p.ServerDir
+	if backend == "go" {
+		cmd.Env = append(os.Environ(),
+			"HTTP_PORT=4010", "GAME_PORT=8800",
+			"SERVER_DIR="+p.ServerDir, "GAME_VER=0.12.786")
+	}
 	cmd.Stdout = f
 	cmd.Stderr = f
 	if err := cmd.Start(); err != nil {
@@ -147,8 +160,10 @@ func ensureServer(p Paths, st *ServiceState) bool {
 }
 
 func killServer() int {
-	cmd := hiddenCmd("taskkill", "/F", "/IM", "nine-regions-backend.exe")
-	_ = cmd.Run()
+	for _, name := range []string{"nine-regions-backend.exe", "backend-go.exe"} {
+		cmd := hiddenCmd("taskkill", "/F", "/IM", name)
+		_ = cmd.Run()
+	}
 	deadline := time.Now().Add(8 * time.Second)
 	for time.Now().Before(deadline) {
 		if !portOpen(WsPort, 200*time.Millisecond) && !portOpen(HttpPort, 200*time.Millisecond) {
@@ -192,7 +207,7 @@ func checkServices(p Paths) ServiceState {
 	return st
 }
 
-func ensureAll(p Paths, progress func(string)) ServiceState {
+func ensureAll(p Paths, backend string, progress func(string)) ServiceState {
 	st := ServiceState{}
 	if progress != nil {
 		progress("检查本地服务…")
@@ -213,7 +228,7 @@ func ensureAll(p Paths, progress func(string)) ServiceState {
 				progress("正在启动游戏服…")
 			}
 			st.Message = ""
-			ensureServer(p, &st)
+			ensureServer(p, &st, backend)
 		}
 	}
 	st.AllReady = st.Ready()

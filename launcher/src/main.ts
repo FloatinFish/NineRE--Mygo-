@@ -76,8 +76,12 @@ function initials(name: string): string {
 function accountSub(a: AccountView): string {
   const lv = a.hasStat && a.statLevel > 0 ? a.statLevel : a.level;
   const parts = [`Lv.${lv || 1}`];
-  if (a.tierName) parts.push(a.tierName);
-  if (a.hasStat) parts.push(`${a.species}种/${a.copies}张`);
+  if (!a.registered) parts.push(snap && !snap.services.postgres ? "服务端检查中…" : "未在服务端登记");
+  else {
+    if (a.tierName) parts.push(a.tierName);
+    if (a.hasStat) parts.push(`${a.species}种/${a.copies}张`);
+    else parts.push("已登记 · 无存档");
+  }
   return parts.join(" · ");
 }
 
@@ -147,7 +151,11 @@ function renderDetail() {
     return;
   }
   detailName.textContent = a.name;
-  detailSub.textContent = a.uid ? `UID ${a.uid}` : "本机账号 · 首次进入会自动建号";
+  detailSub.textContent = !a.registered
+    ? (snap && !snap.services.postgres ? "本机账号 · 服务端检查中…" : "本机账号 · 服务端未登记")
+    : a.uid
+      ? `UID ${a.uid}`
+      : "本机账号 · 已登记";
   infoRows.replaceChildren(
     infoRow("等级", String((a.hasStat && a.statLevel > 0 ? a.statLevel : a.level) || 1)),
     infoRow("段位", a.tierName || "—"),
@@ -170,6 +178,8 @@ function renderAction() {
   if (!snap) return;
   const p = snap.prefs;
   setSeg($("#screenMode"), "button", "full", snap.screenFull);
+  const sb = $("#serviceBackendSelect") as HTMLSelectElement;
+  if (sb) sb.value = snap.serviceBackend || "node";
   const res = $("#resolution") as HTMLSelectElement;
   const key = `${snap.screenW}x${snap.screenH}`;
   if (res.options.length === 0) {
@@ -221,21 +231,21 @@ function renderAction() {
 
 function renderChrome() {
   if (!snap) return;
+  // 先用打包进前端的 LOGO/海报立即出画面，拿到 assetBase 后再无感替换为外部素材。
   if (snap.assetBase && !bgVideo.src) {
     bgVideo.src = `${snap.assetBase}/login_bg.mp4`;
     bgVideo.poster = `${snap.assetBase}/login_bg.jpg`;
-    logo.src = `${snap.assetBase}/title_logo.png`;
     void bgVideo.play().catch(() => {});
+  }
+  if (snap.assetBase && !logo.dataset.external) {
+    logo.dataset.external = "1";
+    logo.src = `${snap.assetBase}/title_logo.png`;
   }
   if (snap.assetBase && !bgmStarted) {
     bgm.src = `${snap.assetBase}/bgm_preview.m4a`;
     bgmStarted = true;
     syncBgm();
     void bgm.play().catch(() => {});
-  }
-  if (!snap.assetBase) {
-    bgVideo.classList.add("hidden");
-    logo.classList.add("hidden");
   }
 }
 
@@ -613,6 +623,23 @@ function bindEvents() {
       }
     });
   }
+
+  ($("#serviceBackendSelect") as HTMLSelectElement | null)?.addEventListener("change", async (ev) => {
+    if (!snap) return;
+    const backend = (ev.target as HTMLSelectElement).value || "node";
+    if ((snap.serviceBackend || "node") === backend) return;
+    try {
+      snap = await Launcher.setServiceBackend(backend);
+      renderAction();
+      toast(backend === "go"
+        ? "已切换 GO（实验，仍在内测迭代）：正在重启服务器…"
+        : "已切换 Node：正在重启服务器…");
+      await restartServer();
+    } catch (e) {
+      toast("切换失败：" + errText(e));
+      renderAction();
+    }
+  });
 
   ($("#resolution") as HTMLSelectElement).addEventListener("change", async (ev) => {
     if (!snap) return;

@@ -32,6 +32,7 @@ type Paths struct {
 
 func (p Paths) McExe() string      { return filepath.Join(p.GameDir, "MC.exe") }
 func (p Paths) ServerExe() string  { return filepath.Join(p.ServerDir, "nine-regions-backend.exe") }
+func (p Paths) GoServerExe() string { return filepath.Join(p.ServerDir, "backend-go.exe") }
 func (p Paths) StoreGame() string  { return filepath.Join(p.GameDir, "File", "palr_local_store.txt") }
 func (p Paths) StoreLocal() string {
 	if p.LocalLowDir == "" {

@@ -3,9 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"io"
-	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -13,60 +10,66 @@ import (
 	"time"
 
 	"github.com/egoist/mygo"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type AccountView struct {
-	Name     string `json:"name"`
-	Level    int    `json:"level"`
-	Last     int64  `json:"last"`
-	Secs     int64  `json:"secs"`
-	Uid      string `json:"uid"`
-	HasStat  bool   `json:"hasStat"`
-	Species  int    `json:"species"`
-	Copies   int    `json:"copies"`
-	Tier     int    `json:"tier"`
-	TierName string `json:"tierName"`
-	StatLevel int   `json:"statLevel"`
-	Stages   int    `json:"stages"`
-	Money    int    `json:"money"`
-	Jade     int    `json:"jade"`
-	Star     int    `json:"star"`
+	Name       string `json:"name"`
+	Registered bool   `json:"registered"`
+	Level      int    `json:"level"`
+	Last       int64  `json:"last"`
+	Secs       int64  `json:"secs"`
+	Uid        string `json:"uid"`
+	HasStat    bool   `json:"hasStat"`
+	Species    int    `json:"species"`
+	Copies     int    `json:"copies"`
+	Tier       int    `json:"tier"`
+	TierName   string `json:"tierName"`
+	StatLevel  int    `json:"statLevel"`
+	Stages     int    `json:"stages"`
+	Money      int    `json:"money"`
+	Jade       int    `json:"jade"`
+	Star       int    `json:"star"`
 }
 
 type Snapshot struct {
-	Mode         string         `json:"mode"`
-	Root         string         `json:"root"`
-	GameDir      string         `json:"gameDir"`
-	AssetBase    string         `json:"assetBase"`
-	Accounts     []AccountView  `json:"accounts"`
-	Selected     string         `json:"selected"`
-	Services     ServiceState   `json:"services"`
-	Prefs        Prefs          `json:"prefs"`
-	ScreenFull   int            `json:"screenFull"`
-	ScreenW      int            `json:"screenW"`
-	ScreenH      int            `json:"screenH"`
-	GameRunning  bool           `json:"gameRunning"`
-	Announcement string         `json:"announcement"`
-	StatsReady   bool           `json:"statsReady"`
-	Error        string         `json:"error"`
+	Mode         string        `json:"mode"`
+	Root         string        `json:"root"`
+	GameDir      string        `json:"gameDir"`
+	AssetBase    string        `json:"assetBase"`
+	Accounts     []AccountView `json:"accounts"`
+	Selected     string        `json:"selected"`
+	Services     ServiceState  `json:"services"`
+	Prefs        Prefs         `json:"prefs"`
+	ScreenFull   int           `json:"screenFull"`
+	ScreenW      int           `json:"screenW"`
+	ScreenH      int           `json:"screenH"`
+	GameRunning  bool          `json:"gameRunning"`
+	Announcement string        `json:"announcement"`
+	ServiceBackend string      `json:"serviceBackend"`
+	StatsReady   bool          `json:"statsReady"`
+	Error        string        `json:"error"`
 }
 
 // Launcher 是暴露给前端的绑定服务。
 type Launcher struct {
-	mu       sync.Mutex
-	paths    Paths
-	store    *Store
-	selected string
-	assetDir string
+	mu        sync.Mutex
+	paths     Paths
+	store     *Store
+	selected  string
+	assetDir  string
 	assetBase string
 
-	stats      map[string]AccountStat
-	statsAt    time.Time
-	svc        ServiceState
-	svcAt      time.Time
-	game       bool
-	gameAt     time.Time
-	starting   bool
+	stats     map[string]AccountStat
+	statsAt   time.Time
+	dbMu      sync.Mutex
+	dbPool    *pgxpool.Pool
+	accountMu sync.Mutex
+	svc       ServiceState
+	svcAt     time.Time
+	game      bool
+	gameAt    time.Time
+	starting  bool
 }
 
 func NewLauncher() *Launcher {
@@ -132,13 +135,21 @@ func (l *Launcher) snapshotLocked() Snapshot {
 		l.gameAt = time.Now()
 	}
 	statsReady := false
-	if l.svc.Http {
-		if time.Since(l.statsAt) > 2*time.Second {
+	if time.Since(l.statsAt) > 2*time.Second {
+		if l.svc.Postgres {
+			if st, err := l.fetchStatsDB(); err == nil {
+				l.stats = st
+				l.statsAt = time.Now()
+			} else if l.svc.Http {
+				l.stats = fetchStats(1500 * time.Millisecond)
+				l.statsAt = time.Now()
+			}
+		} else if l.svc.Http {
 			l.stats = fetchStats(1500 * time.Millisecond)
 			l.statsAt = time.Now()
 		}
-		statsReady = len(l.stats) > 0
 	}
+	statsReady = len(l.stats) > 0
 
 	snap := Snapshot{
 		Mode:        string(l.paths.Mode),
@@ -162,7 +173,8 @@ func (l *Launcher) snapshotLocked() Snapshot {
 			Name: a.Name, Level: a.Level, Last: a.Last, Secs: a.Secs, Uid: a.Uid,
 		}
 		if st, ok := l.stats[a.Name]; ok {
-			v.HasStat = true
+			v.Registered = true
+			v.HasStat = st.Ok
 			v.Species, v.Copies, v.Tier = st.Species, st.Copies, st.Tier
 			v.TierName = rankName(st.Tier)
 			v.StatLevel, v.Stages = st.Level, st.Stages
@@ -171,6 +183,7 @@ func (l *Launcher) snapshotLocked() Snapshot {
 		snap.Accounts = append(snap.Accounts, v)
 	}
 	snap.Announcement = l.announcementLocked()
+	snap.ServiceBackend = readServiceBackend(l.paths)
 	return snap
 }
 
@@ -222,7 +235,8 @@ func (l *Launcher) DeleteAccount(name string) (Snapshot, error) {
 	for _, a := range l.store.Accounts {
 		names = append(names, a.Name)
 	}
-	go reconcileAccounts(names, 2*time.Second)
+	/** 2026-11-09：账号表对账改由 Go 直接写 accounts.json（不再经 Node /palracc）。 */
+	l.pruneServerAccounts(names)
 	return l.snapshotLocked(), nil
 }
 
@@ -259,7 +273,7 @@ func (l *Launcher) EnsureServices() (ServiceState, error) {
 		l.mu.Unlock()
 		return l.svc, err
 	}
-	return ensureAll(l.paths, nil), nil
+	return ensureAll(l.paths, readServiceBackend(l.paths), nil), nil
 }
 
 func (l *Launcher) RestartServer() ServiceState {
@@ -267,7 +281,15 @@ func (l *Launcher) RestartServer() ServiceState {
 		return ServiceState{Message: err.Error()}
 	}
 	killServer()
-	return ensureAll(l.paths, nil)
+	return ensureAll(l.paths, readServiceBackend(l.paths), nil)
+}
+
+// SetServiceBackend 选择本地服务端内核（node | go）。GO 分支仍在内测迭代，仅用于试验。
+func (l *Launcher) SetServiceBackend(backend string) Snapshot {
+	if err := writeServiceBackend(l.paths, backend); err != nil {
+		return l.snapshotLocked()
+	}
+	return l.snapshotLocked()
 }
 
 func (l *Launcher) StopServices() {
@@ -367,20 +389,4 @@ func (l *Launcher) Logs(mode string) string {
 		path = l.paths.PgLog
 	}
 	return tail(path, 200, 64*1024)
-}
-
-func reconcileAccounts(names []string, timeout time.Duration) string {
-	if len(names) == 0 {
-		return ""
-	}
-	body := "op=prune&names=" + url.QueryEscape(strings.Join(names, "|"))
-	client := &http.Client{Timeout: timeout, Transport: &http.Transport{Proxy: nil}}
-	resp, err := client.Post("http://127.0.0.1:4010/r/1.0.50/palracc",
-		"application/x-www-form-urlencoded", strings.NewReader(body))
-	if err != nil {
-		return ""
-	}
-	defer resp.Body.Close()
-	b, _ := io.ReadAll(resp.Body)
-	return strings.TrimSpace(string(b))
 }

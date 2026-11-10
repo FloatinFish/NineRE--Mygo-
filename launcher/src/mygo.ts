@@ -6,6 +6,7 @@ import { call } from "mygo-runtime";
 
 export interface AccountView {
   name: string;
+  registered: boolean;
   level: number;
   last: number;
   secs: number;
@@ -55,6 +56,7 @@ export interface Snapshot {
   screenH: number;
   gameRunning: boolean;
   announcement: string;
+  serviceBackend: string;
   statsReady: boolean;
   error: string;
 }
@@ -118,6 +120,10 @@ export const Launcher = {
   },
   setScreen(full: number, w: number, h: number): Promise<Snapshot> {
     return call("Launcher.SetScreen", full, w, h);
+  },
+  /** SetServiceBackend 选择本地服务端内核（node | go）。GO 分支仍在内测迭代，仅用于试验。 */
+  setServiceBackend(backend: string): Promise<Snapshot> {
+    return call("Launcher.SetServiceBackend", backend);
   },
   setToggle(key: string, on: boolean): Promise<Prefs> {
     return call("Launcher.SetToggle", key, on);

@@ -3,7 +3,7 @@ import { defineConfig } from "mygo-cli";
 export default defineConfig({
   name: "NineRE Launcher",
   identifier: "com.floatin.ninere.starter",
-  version: "0.1.4",
+  version: "0.1.5",
   // `mygo dev` runs devCommand and loads devUrl; `mygo build` runs
   // buildCommand and embeds frontendDist into the app.
   devUrl: "http://localhost:5173",

@@ -4,10 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NineRE Launcher</title>
+    <!-- 立即显示：LOGO/背景海报随 HTML 一起打包，不等 Snapshot 回包 -->
+    <link rel="preload" as="image" href="./title_logo.png" />
     <link rel="stylesheet" href="./src/style.css" />
   </head>
   <body>
-    <video id="bgVideo" class="bg-video" autoplay muted loop playsinline></video>
+    <video id="bgVideo" class="bg-video" autoplay muted loop playsinline poster="./login_bg.jpg"></video>
     <div class="shade"></div>
 
     <div class="app">
@@ -29,7 +31,7 @@
       <main class="layout">
         <section class="left">
           <div class="logo-wrap">
-            <img id="logo" class="logo" alt="NineRE" />
+            <img id="logo" class="logo" alt="NineRE" src="./title_logo.png" decoding="sync" />
           </div>
 
           <section class="panel accounts-panel">
@@ -64,7 +66,8 @@
             <button data-full="0">窗口化</button>
             <button data-full="1">全屏</button>
           </div>
-          <select id="resolution" class="select"></select>
+          <div class="field-label">分辨率</div>
+          <select id="resolution" class="select" aria-label="分辨率"></select>
 
           <div class="field-label">画质</div>
           <div class="seg quality" id="quality">
@@ -95,14 +98,23 @@
 
           <div class="service-block">
             <div class="section-title">本地服务</div>
-            <div class="service-row" id="svcPg"><i></i><span>数据库</span><b>检查中</b></div>
-            <div class="service-row" id="svcSrv"><i></i><span>服务器</span><b>检查中</b></div>
-            <div class="service-row" id="svcHttp"><i></i><span>接口</span><b>检查中</b></div>
-            <button class="link small" id="restartBtn">重启服务器</button>
+            <div class="service-line">
+              <span class="svc" id="svcPg"><i></i>数据库<b>检查中</b></span>
+              <span class="svc" id="svcSrv"><i></i>服务器<b>检查中</b></span>
+              <span class="svc" id="svcHttp"><i></i>接口<b>检查中</b></span>
+            </div>
           </div>
           </div>
 
           <div class="actions">
+            <div class="backend-pick">
+              <label for="serviceBackendSelect">服务端内核</label>
+              <select id="serviceBackendSelect" class="select mini" aria-label="服务端内核">
+                <option value="node">Node（完整）</option>
+                <option value="go">GO（实验）</option>
+              </select>
+            </div>
+            <div class="hint go-hint">GO 仍在迭代过渡，不建议日常使用。</div>
             <button class="ghost" id="updateBtn">更新启动器</button>
             <button class="primary" id="enterBtn" disabled>等待服务就绪…</button>
           </div>
@@ -114,6 +126,7 @@
           <button class="console-toggle" id="consoleToggle"><span id="chevron">▸</span> 服务端控制台</button>
           <div class="console-tabs">
             <button id="retryBtn" class="retry hidden">重试启动服务</button>
+            <button id="restartBtn" class="tab">重启服务</button>
             <button class="tab active" data-log="server">服务端</button>
             <button class="tab" data-log="pg">数据库</button>
           </div>

@@ -55,8 +55,7 @@ func main() {
 			DisableMaximize: true,
 			Frameless:       true,
 			BackgroundColor: "#0b0d10",
-			StateKey:        "main",
-			Page:            mygo.PageOptions{Autoplay: mygo.AutoplayAllow, ZoomFactor: 1},
+			Page:            mygo.PageOptions{Autoplay: mygo.AutoplayAllow, ZoomFactor: 1, BackgroundThrottling: mygo.ThrottlingOff},
 			URL:             "/",
 		})
 	})
